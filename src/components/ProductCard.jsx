@@ -1,5 +1,6 @@
 // src/components/ProductCard.js
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 const ProductCard = ({ product }) => {
   const [liked, setLiked] = useState(false);
@@ -49,6 +50,15 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    image: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    rating: PropTypes.number.isRequired,
+  }).isRequired,
 };
 
 export default ProductCard;

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Header from "./components/Header";
 import Slider from "./components/Slider";
 import MainBody from "./components/MainBody";
@@ -14,7 +15,7 @@ class ErrorBoundary extends React.Component {
     this.state = { hasError: false };
   }
 
-  static getDerivedStateFromError(error) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
 
@@ -30,7 +31,7 @@ class ErrorBoundary extends React.Component {
               Missing or invalid Clerk Publishable Key. Please check your
               environment configuration.
             </p>
-            {process.env.NODE_ENV === "development" && (
+            {import.meta.env.MODE === "development" && (
               <div className="mt-4 p-4 bg-gray-100 rounded text-left text-sm">
                 <p className="font-mono">
                   1. Create a .env file in your project root
@@ -49,6 +50,10 @@ class ErrorBoundary extends React.Component {
     return this.props.children;
   }
 }
+
+ErrorBoundary.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 
 function App() {
   const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;

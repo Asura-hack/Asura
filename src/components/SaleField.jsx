@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 const SaleItem = ({ sale }) => (
   <div
@@ -65,6 +66,19 @@ const SaleItem = ({ sale }) => (
     </div>
   </div>
 );
+
+SaleItem.propTypes = {
+  sale: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    bgColor: PropTypes.string,
+    name: PropTypes.string,
+    discount: PropTypes.string,
+    description: PropTypes.string,
+    accentColor: PropTypes.string,
+    validUntil: PropTypes.string,
+    category: PropTypes.string,
+  }).isRequired,
+};
 
 const SaleField = () => {
   const saleItems = [

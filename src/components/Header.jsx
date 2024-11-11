@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSearch } from "../context/SearchContext";
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
+import PropTypes from "prop-types";
 
 const Header = () => {
   const [showMenu, setShowMenu] = useState(false);
@@ -207,6 +208,10 @@ const Header = () => {
       </div>
     </header>
   );
+};
+
+Header.propTypes = {
+  isMobile: PropTypes.bool,
 };
 
 export default Header;

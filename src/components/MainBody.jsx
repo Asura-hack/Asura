@@ -5,7 +5,6 @@ import { products } from "../data/products";
 import CategoryNav from "./CategoryNav";
 
 const MainBody = () => {
-  const [showProductList, setShowProductList] = useState(true);
   const [activeCategory, setActiveCategory] = useState("");
 
   useEffect(() => {
@@ -44,11 +43,9 @@ const MainBody = () => {
             categories={categories}
             activeCategory={activeCategory}
           />
-          {showProductList && (
-            <div className="flex-1">
-              <ProductList categories={categories} products={products} />
-            </div>
-          )}
+          <div className="flex-1">
+            <ProductList categories={categories} products={products} />
+          </div>
         </div>
       </div>
     </div>

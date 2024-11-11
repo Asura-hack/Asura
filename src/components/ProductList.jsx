@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import ProductCard from "./ProductCard";
 import { useSearch } from "../context/SearchContext";
+import PropTypes from "prop-types";
 
 const ProductList = ({ categories, products }) => {
   const { searchQuery, searchCategory } = useSearch();
@@ -74,6 +75,11 @@ const ProductList = ({ categories, products }) => {
       )}
     </div>
   );
+};
+
+ProductList.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.object).isRequired,
+  products: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default ProductList;

@@ -6,5 +6,10 @@ module.exports = {
   theme: {
     extend: {},
   },
+  settings: {
+    react: {
+      version: "detect",
+    },
+  },
   plugins: [],
 };

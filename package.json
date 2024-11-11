@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --port 4000",
     "build": "vite build",
-    "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "preview": "vite preview",
     "build:css": "postcss src/styles/tailwind.css -o src/styles/output.css"
   },

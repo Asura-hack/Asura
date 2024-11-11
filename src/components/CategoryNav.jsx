@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 
 const CategoryNav = ({ categories, activeCategory }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +48,11 @@ const CategoryNav = ({ categories, activeCategory }) => {
       </div>
     </nav>
   );
+};
+
+CategoryNav.propTypes = {
+  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  activeCategory: PropTypes.string.isRequired,
 };
 
 export default CategoryNav;
