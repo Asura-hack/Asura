@@ -11,6 +11,7 @@
     "build:css": "postcss src/styles/tailwind.css -o src/styles/output.css"
   },
   "dependencies": {
+    "@clerk/clerk-react": "^5.15.2",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.4.48",
     "react": "^18.3.1",
