@@ -9,6 +9,8 @@ const ProductCard = ({ product }) => {
     setLiked(!liked);
   };
 
+  console.log("ProductCard props:", product); // Debugging log
+
   return (
     <div className="group bg-white rounded-lg shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden border border-gray-100">
       <div className="relative">

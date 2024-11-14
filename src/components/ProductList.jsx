@@ -1,11 +1,26 @@
 // src/components/ProductList.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductCard from "./ProductCard";
 import { useSearch } from "../context/SearchContext";
 import PropTypes from "prop-types";
+import axios from "axios";
 
-const ProductList = ({ categories, products }) => {
+const ProductList = ({ categories }) => {
   const { searchQuery, searchCategory } = useSearch();
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    // Fetch products from DummyJSON
+    axios
+      .get("https://dummyjson.com/products")
+      .then((response) => {
+        console.log("Fetched products:", response.data.products); // Debugging log
+        setProducts(response.data.products);
+      })
+      .catch((error) => {
+        console.error("Error fetching products:", error);
+      });
+  }, []);
 
   // Filter products based on search
   const filteredProducts = products.filter((product) => {
@@ -17,6 +32,8 @@ const ProductList = ({ categories, products }) => {
       product.category === searchCategory;
     return matchesSearch && matchesCategory;
   });
+
+  console.log("Filtered products:", filteredProducts); // Debugging log
 
   // Group products by category
   const productsByCategory = categories.reduce((acc, category) => {
@@ -78,8 +95,7 @@ const ProductList = ({ categories, products }) => {
 };
 
 ProductList.propTypes = {
-  categories: PropTypes.arrayOf(PropTypes.object).isRequired,
-  products: PropTypes.arrayOf(PropTypes.object).isRequired,
+  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default ProductList;

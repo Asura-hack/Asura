@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import SaleField from "./SaleField";
 import ProductList from "./ProductList";
-import { products } from "../data/products";
 import CategoryNav from "./CategoryNav";
 
 const MainBody = () => {
@@ -9,9 +8,9 @@ const MainBody = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      const categories = [
-        ...new Set(products.map((product) => product.category)),
-      ];
+      // const categories = [
+      //   ...new Set(products.map((product) => product.category)),
+      // ];
 
       // Find which category is currently in view
       for (const category of categories) {
@@ -32,7 +31,14 @@ const MainBody = () => {
     };
   }, []);
 
-  const categories = [...new Set(products.map((product) => product.category))];
+  const categories = [
+    "Electronics",
+    "Accessories",
+    "Home Appliances",
+    "Fitness",
+    "Fashion",
+    "Home & Living",
+  ]; // Define your categories here
 
   return (
     <div className="bg-gray-50 min-h-screen py-3 sm:py-6">
@@ -44,7 +50,7 @@ const MainBody = () => {
             activeCategory={activeCategory}
           />
           <div className="flex-1">
-            <ProductList categories={categories} products={products} />
+            <ProductList categories={categories} />
           </div>
         </div>
       </div>

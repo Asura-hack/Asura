@@ -88,7 +88,7 @@ const Header = () => {
           <div className="w-28 sm:w-36 lg:w-44 flex-shrink-0">
             <a href="/">
               <img
-                src="./src/data/ecoMallLogo.png"
+                src="../data/ecoMallLogo.png"
                 alt="Logo"
                 className="h-auto w-full"
               />

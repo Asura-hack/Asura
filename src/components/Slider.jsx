@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { pic1, pic2, pic3, pic4, pic5, pic6 } from "../data/images";
 
 const Slider = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -6,14 +7,7 @@ const Slider = () => {
   const [touchEnd, setTouchEnd] = useState(0);
   const [userClicked, setUserClicked] = useState(false);
 
-  const images = [
-    "./src/data/pic1.jpg",
-    "./src/data/pic2.jpg",
-    "./src/data/pic3.jpg",
-    "./src/data/pic4.png",
-    "./src/data/pic5.jpg",
-    "./src/data/pic6.jpg",
-  ];
+  const images = [pic1, pic2, pic3, pic4, pic5, pic6];
 
   // Handle swipe functionality
   const handleTouchStart = (e) => {
