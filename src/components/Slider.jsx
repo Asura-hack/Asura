@@ -90,11 +90,11 @@ const Slider = () => {
         </div>
 
         {/* Thumbnail navigation for tablet and desktop */}
-        <div className="absolute top-1/2 right-4 -translate-y-1/2 hidden sm:flex flex-col gap-2">
+        <div className="absolute top-1/2 right-4 -translate-y-1/2 hidden sm:flex flex-col">
           {images.map((imagePath, index) => (
             <button
               key={index}
-              className={`w-24 sm:w-32 lg:w-48 h-12 sm:h-14 lg:h-16 border-2 transition-all ${
+              className={`w-12 sm:w-24 lg:w-48 h-6 sm:h-12 lg:h-16 border-2 transition-all ${
                 index === currentImage
                   ? "border-blue-500 opacity-100"
                   : "border-white/50 opacity-70 hover:opacity-100"

@@ -1,24 +1,25 @@
 import React, { useState } from "react";
-import { useSearch } from "../context/SearchContext";
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import PropTypes from "prop-types";
+import { logo } from "../data/images";
 
-const Header = () => {
+const Header = ({ onSearch }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const { handleSearch } = useSearch();
   const [searchInput, setSearchInput] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const { isSignedIn, user } = useUser();
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    handleSearch(searchInput, selectedCategory);
+    if (searchInput.trim()) {
+      onSearch(searchInput, selectedCategory);
+    }
   };
 
-  // Common search input component
   const SearchInput = ({ isMobile = false }) => (
-    <div
+    <form
+      onSubmit={handleSearchSubmit}
       className={`w-full flex shadow-sm rounded-lg overflow-hidden border border-gray-200 ${
         isMobile ? "flex-col" : ""
       }`}
@@ -31,10 +32,12 @@ const Header = () => {
         onChange={(e) => setSelectedCategory(e.target.value)}
       >
         <option>All Categories</option>
+        <option>Fashion</option>
+        <option>Furniture/Home</option>
+        <option>Beauty</option>
         <option>Electronics</option>
-        <option>Accessories</option>
-        <option>Home Appliances</option>
-        <option>Fitness</option>
+        <option>Sports</option>
+        <option>Auto</option>
       </select>
       <div className={`flex flex-1 ${isMobile ? "border-t" : ""}`}>
         <input
@@ -43,21 +46,19 @@ const Header = () => {
           className="flex-1 px-4 py-2.5 text-sm focus:outline-none"
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSearchSubmit(e)}
         />
         <button
-          onClick={handleSearchSubmit}
+          type="submit"
           className="px-8 bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
         >
           Search
         </button>
       </div>
-    </div>
+    </form>
   );
 
   return (
     <header className="w-full bg-white shadow-sm">
-      {/* Top utility bar */}
       <div className="bg-gray-800 py-1.5 text-xs hidden sm:block">
         <div className="max-w-7xl mx-auto flex justify-end gap-8 px-6">
           <a
@@ -81,28 +82,19 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Main header */}
       <div className="max-w-7xl mx-auto py-4 px-6">
         <div className="flex items-center justify-between gap-4">
-          {/* Logo */}
           <div className="w-28 sm:w-36 lg:w-44 flex-shrink-0">
             <a href="/">
-              <img
-                src="../data/ecoMallLogo.png"
-                alt="Logo"
-                className="h-auto w-full"
-              />
+              <img src={logo} alt="Logo" className="h-auto w-full" />
             </a>
           </div>
 
-          {/* Desktop Search */}
           <div className="hidden lg:flex flex-1 max-w-3xl">
             <SearchInput />
           </div>
 
-          {/* Mobile Icons */}
           <div className="flex items-center gap-2 lg:hidden">
-            {/* Search Icon */}
             <button
               onClick={() => setShowSearch(!showSearch)}
               className="p-2 rounded-lg hover:bg-gray-100"
@@ -121,8 +113,6 @@ const Header = () => {
                 />
               </svg>
             </button>
-
-            {/* Menu Icon */}
             <button
               onClick={() => setShowMenu(!showMenu)}
               className="p-2 rounded-lg hover:bg-gray-100"
@@ -143,7 +133,6 @@ const Header = () => {
             </button>
           </div>
 
-          {/* Right menu */}
           <div className="flex items-center gap-6">
             {isSignedIn ? (
               <div className="hidden lg:flex items-center gap-2 group">
@@ -192,14 +181,12 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Mobile Search */}
         {showSearch && (
           <div className="mt-4 lg:hidden">
             <SearchInput isMobile={true} />
           </div>
         )}
 
-        {/* Mobile Menu */}
         {showMenu && (
           <div className="mt-4 lg:hidden">
             {/* Add your mobile menu components here */}
@@ -212,6 +199,7 @@ const Header = () => {
 
 Header.propTypes = {
   isMobile: PropTypes.bool,
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default Header;

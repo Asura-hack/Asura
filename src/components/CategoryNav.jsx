@@ -1,42 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
-const CategoryNav = ({ categories, activeCategory }) => {
-  const [isOpen, setIsOpen] = useState(false);
-
-  const scrollToCategory = (category) => {
-    const element = document.getElementById(`category-${category}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
+const CategoryNav = ({ categories, activeCategory, onCategorySelect }) => {
   return (
-    <nav className="w-full lg:w-72 xl:w-80 lg:flex-shrink-0">
-      <div className="sticky top-[60px] lg:top-20 bg-white rounded-xl shadow-sm border border-gray-100 z-40">
-        <div className="p-3 border-b flex justify-between items-center">
-          <h3 className="text-base lg:text-lg font-medium text-gray-900">
-            Categories
-          </h3>
-          <button
-            className="lg:hidden w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100"
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            {isOpen ? "−" : "+"}
-          </button>
+    <nav className="w-full lg:w-48 xl:w-60 lg:flex-shrink-0">
+      <div className="sticky top-4 bg-white shadow-sm border border-gray-100 z-40 rounded-lg">
+        <div className="p-1 border-b">
+          <h3 className="font-semibold text-gray-800">Categories</h3>
         </div>
-        <div
-          className={`${
-            isOpen ? "block" : "hidden"
-          } lg:block max-h-[70vh] overflow-y-auto`}
-        >
+        <div className="lg:block max-h-[calc(100vh-160px)] overflow-y-auto p-1">
+          <button
+            onClick={() => onCategorySelect("All Categories")}
+            className={`w-full text-left p-1 rounded-md transition-all mb-1
+              ${
+                activeCategory === "All Categories"
+                  ? "text-blue-600 font-medium bg-blue-50 border-l-4 border-blue-600"
+                  : "text-gray-600 hover:bg-gray-50 border-l-4 border-transparent"
+              }`}
+          >
+            All Categories
+          </button>
           {categories.map((category) => (
             <button
               key={category}
-              onClick={() => scrollToCategory(category)}
-              className={`w-full text-left px-4 py-3 text-sm transition-all
+              onClick={() => onCategorySelect(category)}
+              className={`w-full text-left p-1 rounded-md transition-all
                 ${
-                  activeCategory === category
+                  activeCategory.toLowerCase() === category.toLowerCase()
                     ? "text-blue-600 font-medium bg-blue-50 border-l-4 border-blue-600"
                     : "text-gray-600 hover:bg-gray-50 border-l-4 border-transparent"
                 }`}
@@ -53,6 +43,7 @@ const CategoryNav = ({ categories, activeCategory }) => {
 CategoryNav.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string).isRequired,
   activeCategory: PropTypes.string.isRequired,
+  onCategorySelect: PropTypes.func.isRequired,
 };
 
 export default CategoryNav;

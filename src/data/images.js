@@ -4,5 +4,6 @@ import pic3 from "../data/pic3.jpg";
 import pic4 from "../data/pic4.png";
 import pic5 from "../data/pic5.jpg";
 import pic6 from "../data/pic6.jpg";
+import logo from "../data/ecoMallLogo.png";
 
-export { pic1, pic2, pic3, pic4, pic5, pic6 };
+export { pic1, pic2, pic3, pic4, pic5, pic6, logo };
