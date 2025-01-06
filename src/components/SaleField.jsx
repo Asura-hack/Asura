@@ -18,7 +18,7 @@ const SaleItem = ({ sale }) => {
           <img
             src={imageError ? "/placeholder-image.jpg" : sale.thumbnail}
             alt={sale.title}
-            className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
             onError={handleImageError}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
