@@ -5,14 +5,14 @@ import Header from "./components/Header";
 import Slider from "./components/Slider";
 import MainBody from "./components/MainBody";
 import Footer from "./components/Footer";
-import { ClerkProvider, SignIn } from "@clerk/clerk-react";
+import { ClerkProvider, SignIn, useClerk } from "@clerk/clerk-react";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import ProductDetails from "./components/ProductDetails";
 import CategoryPage from "./components/CategoryPage";
 import { Loader } from "./components/shared/Loader";
 import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
-import { CartProvider } from "./context/CartContext";
+import { CartProvider, useCart } from "./context/CartContext";
 import Cart from "./components/Cart";
 import { Toaster } from "react-hot-toast";
 
@@ -27,7 +27,6 @@ const App = () => {
       <Toaster
         position="top-right"
         toastOptions={{
-          // Custom options
           success: {
             duration: 3000,
             style: {
@@ -73,6 +72,8 @@ const MainApp = ({
   setLoading,
 }) => {
   const location = useLocation();
+  const { isLoading } = useCart();
+  const { signOut } = useClerk();
 
   useEffect(() => {
     setLoading(false);
@@ -92,7 +93,15 @@ const MainApp = ({
     setSearchCategory(category);
   };
 
-  if (loading) {
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
+
+  if (loading || isLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader />
@@ -102,7 +111,7 @@ const MainApp = ({
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header onSearch={handleSearch} />
+      <Header onSearch={handleSearch} onSignOut={handleSignOut} />
       <div className="flex-grow">
         <Routes>
           <Route
