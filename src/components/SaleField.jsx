@@ -62,7 +62,7 @@ const SaleField = () => {
         );
         const sortedSales = response.data.products
           .sort((a, b) => b.discountPercentage - a.discountPercentage)
-          .slice(0, 6);
+          .slice(0, 8);
         setTopSales(sortedSales);
       } catch (error) {
         console.error("Error fetching top sales:", error);
@@ -91,7 +91,7 @@ const SaleField = () => {
         </h2>
         <div className="h-1 flex-1 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 rounded-full shadow-md" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {topSales.map((sale) => (
           <SaleItem key={sale.id} sale={sale} />
         ))}

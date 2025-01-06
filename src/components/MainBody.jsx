@@ -60,7 +60,7 @@ const MainBody = ({ searchQuery, searchCategory }) => {
       <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
         <SaleField />
         <div className="flex flex-col lg:flex-row xl:gap-8">
-          <div className="hidden lg:sticky lg:top-4 lg:h-screen lg:w-64">
+          <div className="hidden lg:block lg:sticky lg:top-4 lg:h-screen lg:w-64">
             <CategoryNav
               categories={categories}
               activeCategory={activeCategory}
