@@ -31,7 +31,7 @@ const SaleItem = ({ sale }) => {
           <h3 className="text-lg font-bold text-gray-800 truncate">
             {sale.title}
           </h3>
-          <p className="text-lg font-bold text-red-500 mt-3">
+          <p className="text-lg font-bold text-red-500 mt-3 hidden lg:block">
             {sale.validUntil
               ? `Valid until: ${sale.validUntil}`
               : "Limited Time Only!"}
