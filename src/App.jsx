@@ -14,6 +14,7 @@ import { useLocation } from "react-router-dom";
 import PropTypes from "prop-types";
 import { CartProvider } from "./context/CartContext";
 import Cart from "./components/Cart";
+import { Toaster } from "react-hot-toast";
 
 const App = () => {
   const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -22,22 +23,44 @@ const App = () => {
   const [loading, setLoading] = useState(true);
 
   return (
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <SpeedInsights />
-      <Analytics />
-      <CartProvider>
-        <BrowserRouter>
-          <MainApp
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            searchCategory={searchCategory}
-            setSearchCategory={setSearchCategory}
-            loading={loading}
-            setLoading={setLoading}
-          />
-        </BrowserRouter>
-      </CartProvider>
-    </ClerkProvider>
+    <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          // Custom options
+          success: {
+            duration: 3000,
+            style: {
+              background: "#4CAF50",
+              color: "white",
+            },
+          },
+          error: {
+            duration: 3000,
+            style: {
+              background: "#F44336",
+              color: "white",
+            },
+          },
+        }}
+      />
+      <ClerkProvider publishableKey={clerkPubKey}>
+        <SpeedInsights />
+        <Analytics />
+        <CartProvider>
+          <BrowserRouter>
+            <MainApp
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              searchCategory={searchCategory}
+              setSearchCategory={setSearchCategory}
+              loading={loading}
+              setLoading={setLoading}
+            />
+          </BrowserRouter>
+        </CartProvider>
+      </ClerkProvider>
+    </>
   );
 };
 

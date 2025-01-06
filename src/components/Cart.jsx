@@ -1,12 +1,39 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useCart } from "../context/CartContext";
 import { Link } from "react-router-dom";
-import { useUser, SignInButton, SignUpButton } from "@clerk/clerk-react";
+
+import {
+  useUser,
+  SignInButton,
+  SignUpButton,
+  useClerk,
+} from "@clerk/clerk-react";
 
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, getCartTotal, clearCart } =
     useCart();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
+  const { clerk } = useClerk();
+
+  // Function to update cart data in Clerk's database
+  const saveCartDataToClerk = async () => {
+    if (isSignedIn && user) {
+      try {
+        // Update the custom cart data field
+        await clerk.users.updateUserMetadata(user.id, {
+          cartData: JSON.stringify(cart), // Store cart data as a JSON string
+        });
+        console.log("Cart data saved to Clerk's database!");
+      } catch (error) {
+        console.error("Error saving cart data:", error);
+      }
+    }
+  };
+
+  // Save cart data when the cart changes
+  useEffect(() => {
+    saveCartDataToClerk();
+  }, [cart]);
 
   if (!isSignedIn) {
     return (

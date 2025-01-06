@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from "react";
+import toast from "react-hot-toast";
 import PropTypes from "prop-types";
 
 const CartContext = createContext();
@@ -56,18 +57,24 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = (product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
+    toast.success(`${product.title} added to cart`);
   };
 
   const removeFromCart = (productId) => {
+    const item = state.items.find((item) => item.id === productId);
     dispatch({ type: "REMOVE_FROM_CART", payload: productId });
+    toast.error(`${item.title} removed from cart`);
   };
 
   const updateQuantity = (productId, quantity) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { id: productId, quantity } });
+    const item = state.items.find((item) => item.id === productId);
+    toast.success(`Updated ${item.title} quantity to ${quantity}`);
   };
 
   const clearCart = () => {
     dispatch({ type: "CLEAR_CART" });
+    toast.success("Cart cleared");
   };
 
   const getCartTotal = () => {

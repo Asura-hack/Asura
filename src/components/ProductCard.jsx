@@ -6,13 +6,25 @@ import { useCart } from "../context/CartContext";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
-  const { isSignedIn } = useUser(); // Moved inside the component
+  const { isSignedIn } = useUser();
   const [liked, setLiked] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      discountPercentage: product.discountPercentage,
+      thumbnail: product.thumbnail,
+      quantity: 1,
+      category: product.category,
+    });
+  };
+
   const toggleLike = () => {
-    setLiked(!liked);
+    setLiked((prev) => !prev);
   };
 
   const effectiveDiscountPercentage =
@@ -106,7 +118,7 @@ const ProductCard = ({ product }) => {
           )}
           {isSignedIn && (
             <button
-              onClick={() => addToCart(product)}
+              onClick={handleAddToCart}
               className="w-10 h-10 rounded-full bg-white/90 hover:bg-white flex items-center justify-center transition-all duration-300 hover:scale-110"
             >
               <svg
@@ -167,6 +179,7 @@ ProductCard.propTypes = {
     price: PropTypes.number.isRequired,
     rating: PropTypes.number.isRequired,
     discountPercentage: PropTypes.number,
+    category: PropTypes.string.isRequired,
   }).isRequired,
 };
 
