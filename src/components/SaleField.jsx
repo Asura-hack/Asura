@@ -12,26 +12,33 @@ const SaleItem = ({ sale }) => {
   };
 
   return (
-    <Link to={`/product/${sale.id}`} className="block">
-      <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group">
+    <Link to={`/product/${sale.id}`} className="block group">
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 group">
         <div className="relative">
+          <div className="absolute top-2 left-2">
+            <span className="bg-gradient-to-r from-red-500 to-yellow-500 text-white text-sm px-3 py-1 rounded-full font-semibold">
+              {sale.discountPercentage}% OFF
+            </span>
+          </div>
           <img
             src={imageError ? "/placeholder-image.jpg" : sale.thumbnail}
             alt={sale.title}
-            className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
             onError={handleImageError}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4">
-            <h3 className="text-xl font-bold text-white mb-2 line-clamp-2">
-              {sale.title}
-            </h3>
-            <div className="flex items-center justify-between">
-              <span className="bg-red-500 text-white  px-4 py-1.5 rounded-full font-bold">
-                {sale.discountPercentage}% OFF
-              </span>
-            </div>
-          </div>
+        </div>
+        <div className="p-4">
+          <h3 className="text-lg font-bold text-gray-800 truncate">
+            {sale.title}
+          </h3>
+          <p className="text-sm text-gray-600 mt-2 truncate">
+            {sale.description || "No description available."}
+          </p>
+          <p className="text-lg font-bold text-red-500 mt-3">
+            {sale.validUntil
+              ? `Valid until: ${sale.validUntil}`
+              : "Limited Time Only!"}
+          </p>
         </div>
       </div>
     </Link>
@@ -77,21 +84,21 @@ const SaleField = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center min-h-screen">
         <Loader />
       </div>
     );
   }
 
   return (
-    <div className="max-w-screen-xl mx-auto p-4">
-      <div className="flex items-center gap-4 mb-8">
-        <h2 className="text-4xl font-bold text-gray-900 bg-yellow-300 p-2 rounded-lg shadow-lg">
+    <div className="max-w-screen-xl mx-auto px-4 py-8">
+      <div className="flex items-center gap-4 mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 bg-gradient-to-r from-yellow-400 to-red-500 text-transparent bg-clip-text p-2 rounded-lg">
           Top Sales
         </h2>
-        <div className="h-1 flex-1 bg-gradient-to-r from-yellow-400 via-red-500 to-pink-500 rounded-full shadow-md" />
+        <div className="h-1 flex-1 bg-gradient-to-r from-yellow-400 to-pink-500 rounded-full shadow-md" />
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {topSales.map((sale) => (
           <SaleItem key={sale.id} sale={sale} />
         ))}
