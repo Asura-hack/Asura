@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import Header from "./components/Header";
 import Slider from "./components/Slider";
 import MainBody from "./components/MainBody";
@@ -21,6 +22,7 @@ const App = () => {
 
   return (
     <ClerkProvider publishableKey={clerkPubKey}>
+      <SpeedInsights />
       <CartProvider>
         <BrowserRouter>
           <MainApp
