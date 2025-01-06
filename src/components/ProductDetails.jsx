@@ -21,7 +21,6 @@ const ReviewStars = ({ rating }) => {
           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
       ))}
-      <span className="text-sm text-gray-600 ml-1">({rating})</span>
     </div>
   );
 };
@@ -36,6 +35,7 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const { isSignedIn } = useUser();
 
@@ -71,6 +71,25 @@ const ProductDetails = () => {
     }
   };
 
+  const calculateTotal = () => {
+    if (!product) return 0;
+    const discountedPrice =
+      product.price * (1 - product.discountPercentage / 100);
+    return discountedPrice * quantity;
+  };
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: product.id,
+      title: product.title,
+      price: product.price,
+      discountPercentage: product.discountPercentage,
+      thumbnail: product.thumbnail,
+      quantity: quantity,
+      category: product.category,
+    });
+  };
+
   if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
   if (!product) return <div>Product not found.</div>;
@@ -80,9 +99,6 @@ const ProductDetails = () => {
       ? product.reviews.reduce((acc, review) => acc + review.rating, 0) /
         product.reviews.length
       : 0;
-
-  const discountedPrice =
-    product.price * (1 - product.discountPercentage / 100);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -135,38 +151,106 @@ const ProductDetails = () => {
           </div>
         </div>
 
-        {/* Product Info */}
-        <div className="md:w-1/2">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            {product.title}
-          </h1>
-          <div className="flex items-center gap-4 mb-4">
-            <ReviewStars rating={Math.round(averageRating)} />
-            <span className="text-gray-600">
-              ({averageRating.toFixed(1)} / 5 rating)
+        {/* Product Details Section */}
+        <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
+          {/* Title and Price */}
+          <div className="border-b pb-4">
+            <h1 className="text-3xl font-bold mb-2">{product?.title}</h1>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-lg font-medium text-blue-600">
+                $
+                {(
+                  product.price *
+                  (1 - product.discountPercentage / 100)
+                ).toFixed(2)}
+              </span>
+              {product?.discountPercentage > 0 && (
+                <span className="text-sm line-through text-gray-500">
+                  ${product?.price.toFixed(2)}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Rating */}
+          <div className="flex items-center gap-2 pb-4 border-b">
+            <div className="font-medium">Rating:</div>
+            <ReviewStars rating={averageRating} />
+            <span className="text-sm text-gray-600 ml-1">
+              ({averageRating.toFixed(1)})
             </span>
           </div>
-          <p className="text-3xl font-bold text-blue-600">
-            ${discountedPrice.toFixed(2)}
-          </p>
-          <p className="text-gray-600 mb-6">{product.description}</p>
-          {isSignedIn ? (
-            <div className="flex gap-4 mb-6">
-              <button
-                onClick={() => addToCart(product)}
-                className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+
+          {/* Description */}
+          <div className="border-b pb-4">
+            <p className="text-gray-600 leading-relaxed">
+              {product?.description}
+            </p>
+          </div>
+
+          {/* Stock and Brand */}
+          <div className="flex justify-between border-b pb-4">
+            <div>
+              <span className="font-medium">Brand: </span>
+              <span className="text-gray-600">{product?.brand}</span>
+            </div>
+            <div>
+              <span className="font-medium">Stock: </span>
+              <span
+                className={`${
+                  product?.stock > 0 ? "text-green-600" : "text-red-600"
+                }`}
               >
-                Add to Cart
+                {product?.stock > 0 ? `${product.stock} units` : "Out of stock"}
+              </span>
+            </div>
+          </div>
+
+          {/* Quantity Selector */}
+          <div className="flex items-center justify-between border-b pb-4">
+            <span className="text-lg font-medium text-gray-700">Quantity:</span>
+            <div className="flex items-center border rounded-lg overflow-hidden">
+              <button
+                onClick={() => setQuantity((prev) => Math.max(prev - 1, 1))}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                -
               </button>
-              <button className="flex-1 bg-gray-100 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors">
-                Add to Wishlist
+              <div className="w-16 text-center py-2 font-medium">
+                {quantity}
+              </div>
+              <button
+                onClick={() => setQuantity((prev) => Math.min(prev + 1, 99))}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 transition-colors"
+              >
+                +
               </button>
             </div>
-          ) : (
-            <p className="text-gray-500 text-center">
-              Sign in to add items to your cart.
-            </p>
-          )}
+          </div>
+
+          {/* Total and Add to Cart */}
+          <div className="space-y-4">
+            <div className="text-2xl font-bold text-gray-800">
+              Total: ${calculateTotal().toFixed(2)}
+            </div>
+            {isSignedIn ? (
+              <button
+                onClick={handleAddToCart}
+                disabled={product?.stock === 0}
+                className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${
+                  product?.stock === 0
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
+              >
+                {product?.stock === 0 ? "Out of Stock" : "Add to Cart"}
+              </button>
+            ) : (
+              <div className="text-center text-gray-600">
+                Please sign in to add items to cart
+              </div>
+            )}
+          </div>
         </div>
       </div>
       {/* Reviews Section */}
