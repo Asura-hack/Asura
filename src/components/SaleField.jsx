@@ -31,9 +31,6 @@ const SaleItem = ({ sale }) => {
           <h3 className="text-lg font-bold text-gray-800 truncate">
             {sale.title}
           </h3>
-          <p className="text-sm text-gray-600 mt-2 truncate">
-            {sale.description || "No description available."}
-          </p>
           <p className="text-lg font-bold text-red-500 mt-3">
             {sale.validUntil
               ? `Valid until: ${sale.validUntil}`
