@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SignInButton, UserButton, useUser } from "@clerk/clerk-react";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { logo } from "../data/images";
 
 const Header = ({ onSearch }) => {
@@ -61,33 +62,33 @@ const Header = ({ onSearch }) => {
     <header className="w-full bg-white shadow-sm">
       <div className="bg-gray-800 py-1.5 text-xs hidden sm:block">
         <div className="max-w-7xl mx-auto flex justify-end gap-8 px-6">
-          <a
-            href="#"
+          <Link
+            to="/customer-service"
             className="text-gray-300 hover:text-white transition-colors"
           >
             Customer Service
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/track-order"
             className="text-gray-300 hover:text-white transition-colors"
           >
             Track Order
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/store-locator"
             className="text-gray-300 hover:text-white transition-colors"
           >
             Store Locator
-          </a>
+          </Link>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto py-4 px-6">
         <div className="flex items-center justify-between gap-4">
           <div className="w-28 sm:w-36 lg:w-44 flex-shrink-0">
-            <a href="/">
+            <Link to="/">
               <img src={logo} alt="Logo" className="h-auto w-full" />
-            </a>
+            </Link>
           </div>
 
           <div className="hidden lg:flex flex-1 max-w-3xl">
@@ -171,13 +172,13 @@ const Header = ({ onSearch }) => {
                 </button>
               </SignInButton>
             )}
-            <a
-              href="#"
+            <Link
+              to="/cart"
               className="flex items-center gap-2 text-gray-700 hover:text-blue-600"
             >
               <span className="text-xl">🛒</span>
               <span className="text-sm">Cart</span>
-            </a>
+            </Link>
           </div>
         </div>
 

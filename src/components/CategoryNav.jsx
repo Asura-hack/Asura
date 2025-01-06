@@ -1,39 +1,53 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import PropTypes from "prop-types";
 
 const CategoryNav = ({ categories, activeCategory, onCategorySelect }) => {
+  const activeButtonRef = useRef(null);
+
+  // Scroll active category into view when it changes
+  useEffect(() => {
+    if (activeButtonRef.current) {
+      activeButtonRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [activeCategory]);
+
   return (
-    <nav className="w-full lg:w-48 xl:w-60 lg:flex-shrink-0">
-      <div className="sticky top-4 bg-white shadow-sm border border-gray-100 z-40 rounded-lg">
-        <div className="p-1 border-b">
-          <h3 className="font-semibold text-gray-800">Categories</h3>
+    <nav className="w-full lg:w-48 xl:w-60 flex-none">
+      <div className="sticky top-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+        {/* Header */}
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="font-semibold text-gray-800 text-lg">Categories</h2>
         </div>
-        <div className="lg:block max-h-[calc(100vh-160px)] overflow-y-auto p-1">
-          <button
-            onClick={() => onCategorySelect("All Categories")}
-            className={`w-full text-left p-1 rounded-md transition-all mb-1
-              ${
-                activeCategory === "All Categories"
-                  ? "text-blue-600 font-medium bg-blue-50 border-l-4 border-blue-600"
-                  : "text-gray-600 hover:bg-gray-50 border-l-4 border-transparent"
-              }`}
-          >
-            All Categories
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => onCategorySelect(category)}
-              className={`w-full text-left p-1 rounded-md transition-all
-                ${
+
+        {/* Category List */}
+        <div className="max-h-[calc(100vh-120px)] p-2 no-scrollbar overflow-y-auto">
+          <div className="space-y-1">
+            {/* Individual Category Buttons */}
+            {categories.map((category) => (
+              <button
+                key={category}
+                ref={
                   activeCategory.toLowerCase() === category.toLowerCase()
-                    ? "text-blue-600 font-medium bg-blue-50 border-l-4 border-blue-600"
-                    : "text-gray-600 hover:bg-gray-50 border-l-4 border-transparent"
-                }`}
-            >
-              {category}
-            </button>
-          ))}
+                    ? activeButtonRef
+                    : null
+                }
+                onClick={() => onCategorySelect(category)}
+                className={`
+                  w-full text-left px-3 py-2 rounded-md transition-colors
+                  ${
+                    activeCategory.toLowerCase() === category.toLowerCase()
+                      ? "bg-blue-50 text-blue-600 font-medium"
+                      : "text-gray-600 hover:bg-gray-50"
+                  }
+                `}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </nav>

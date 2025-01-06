@@ -4,6 +4,7 @@ import axios from "axios";
 import { Loader } from "./shared/Loader";
 import { useCart } from "../context/CartContext";
 import PropTypes from "prop-types";
+import { useUser } from "@clerk/clerk-react";
 
 const ReviewStars = ({ rating }) => {
   return (
@@ -32,51 +33,28 @@ ReviewStars.propTypes = {
 const ProductDetails = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
-  const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addToCart } = useCart();
+  const { isSignedIn } = useUser();
 
   useEffect(() => {
-    const fetchProductAndReviews = async () => {
+    const fetchProduct = async () => {
       try {
         setLoading(true);
-        // Fetch product details
-        const productResponse = await axios.get(
+        const response = await axios.get(
           `https://dummyjson.com/products/${productId}`
         );
-        setProduct(productResponse.data);
-
-        // Fetch reviews for the product
-        const reviewsResponse = await axios.get(
-          `https://dummyjson.com/comments?limit=8`
-        );
-
-        // Transform comments into reviews format
-        const transformedReviews = reviewsResponse.data.comments.map(
-          (comment) => ({
-            id: comment.id,
-            user: comment.user.username,
-            userImage: `https://robohash.org/${comment.user.username}`,
-            rating: (Math.random() * 2 + 3).toFixed(1), // Random rating between 3-5
-            date: new Date(
-              Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
-            ).toISOString(), // Random date within last 30 days
-            comment: comment.body,
-            helpful: Math.floor(Math.random() * 50), // Random helpful count
-          })
-        );
-
-        setReviews(transformedReviews);
-      } catch (error) {
-        setError(error.message);
+        setProduct(response.data);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProductAndReviews();
+    fetchProduct();
   }, [productId]);
 
   const handleNextImage = () => {
@@ -95,11 +73,13 @@ const ProductDetails = () => {
 
   if (loading) return <Loader />;
   if (error) return <div>Error: {error}</div>;
-  if (!product) return null;
+  if (!product) return <div>Product not found.</div>;
 
   const averageRating =
-    reviews.reduce((acc, review) => acc + parseFloat(review.rating), 0) /
-    reviews.length;
+    product.reviews && product.reviews.length > 0
+      ? product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+        product.reviews.length
+      : 0;
 
   const discountedPrice =
     product.price * (1 - product.discountPercentage / 100);
@@ -120,12 +100,14 @@ const ProductDetails = () => {
                 <button
                   onClick={handlePrevImage}
                   className="bg-white/80 rounded-full p-2 hover:bg-white"
+                  aria-label="Previous image"
                 >
                   ←
                 </button>
                 <button
                   onClick={handleNextImage}
                   className="bg-white/80 rounded-full p-2 hover:bg-white"
+                  aria-label="Next image"
                 >
                   →
                 </button>
@@ -137,12 +119,11 @@ const ProductDetails = () => {
               <button
                 key={index}
                 onClick={() => setCurrentImageIndex(index)}
-                className={`aspect-square rounded-lg overflow-hidden border-2 
-                  ${
-                    currentImageIndex === index
-                      ? "border-blue-500"
-                      : "border-transparent"
-                  }`}
+                className={`aspect-square rounded-lg overflow-hidden border-2 ${
+                  currentImageIndex === index
+                    ? "border-blue-500"
+                    : "border-transparent"
+                }`}
               >
                 <img
                   src={image}
@@ -160,139 +141,69 @@ const ProductDetails = () => {
             {product.title}
           </h1>
           <div className="flex items-center gap-4 mb-4">
-            <div className="flex items-center text-yellow-400">
-              {Array.from({ length: 5 }, (_, i) => (
-                <span key={i}>
-                  {i < Math.floor(product.rating) ? "★" : "☆"}
-                </span>
-              ))}
-            </div>
-            <span className="text-gray-600">({product.rating} rating)</span>
-          </div>
-          <div className="mb-6">
-            <p className="text-3xl font-bold text-blue-600">
-              ${discountedPrice.toFixed(2)}
-              {product.discountPercentage > 0 && (
-                <span className="ml-2 text-lg line-through text-gray-400">
-                  ${product.price.toFixed(2)}
-                </span>
-              )}
-            </p>
-            {product.discountPercentage > 0 && (
-              <span className="inline-block mt-1 text-green-600 font-medium">
-                Save {product.discountPercentage}%
-              </span>
-            )}
-          </div>
-          <p className="text-gray-600 mb-6">{product.description}</p>
-          <div className="flex gap-4 mb-6">
-            <button
-              onClick={() => addToCart(product)}
-              className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Add to Cart
-            </button>
-            <button className="flex-1 bg-gray-100 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors">
-              Add to Wishlist
-            </button>
-          </div>
-          <div className="border-t pt-6">
-            <h3 className="font-medium text-gray-900 mb-2">Product Details</h3>
-            <dl className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <dt className="text-gray-600">Category</dt>
-              <dd className="text-gray-900">{product.category}</dd>
-              <dt className="text-gray-600">Brand</dt>
-              <dd className="text-gray-900">{product.brand}</dd>
-              <dt className="text-gray-600">Stock</dt>
-              <dd className="text-gray-900">{product.stock} units</dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-
-      {/* Reviews Section */}
-      <div className="mt-16">
-        <div className="border-t pt-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            Customer Reviews
-          </h2>
-          <div className="flex items-center gap-4 mb-8">
-            <div className="flex items-center">
-              <span className="text-3xl font-bold text-gray-900">
-                {averageRating.toFixed(1)}
-              </span>
-              <span className="text-gray-600 ml-1">/ 5</span>
-            </div>
-            <ReviewStars rating={averageRating} />
+            <ReviewStars rating={Math.round(averageRating)} />
             <span className="text-gray-600">
-              Based on {reviews.length} reviews
+              ({averageRating.toFixed(1)} / 5 rating)
             </span>
           </div>
+          <p className="text-3xl font-bold text-blue-600">
+            ${discountedPrice.toFixed(2)}
+          </p>
+          <p className="text-gray-600 mb-6">{product.description}</p>
+          {isSignedIn ? (
+            <div className="flex gap-4 mb-6">
+              <button
+                onClick={() => addToCart(product)}
+                className="flex-1 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                Add to Cart
+              </button>
+              <button className="flex-1 bg-gray-100 text-gray-800 py-3 px-6 rounded-lg hover:bg-gray-200 transition-colors">
+                Add to Wishlist
+              </button>
+            </div>
+          ) : (
+            <p className="text-gray-500 text-center">
+              Sign in to add items to your cart.
+            </p>
+          )}
+        </div>
+      </div>
+      {/* Reviews Section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          Customer Reviews
+        </h2>
+        <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center">
+            <span className="text-3xl font-bold text-gray-900">
+              {averageRating.toFixed(1)}
+            </span>
+            <span className="text-gray-600 ml-1">/ 5</span>
+          </div>
+          <ReviewStars rating={Math.round(averageRating)} />
+          <span className="text-gray-600">
+            Based on {product.reviews.length} reviews
+          </span>
+        </div>
 
-          <div className="space-y-8">
-            {reviews.map((review) => (
-              <div key={review.id} className="border-b pb-8 last:border-b-0">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={review.userImage}
-                      alt={review.user}
-                      className="w-12 h-12 rounded-full"
-                    />
-                    <div>
-                      <h3 className="font-medium text-gray-900">
-                        {review.user}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <ReviewStars rating={parseFloat(review.rating)} />
-                        <span className="text-sm text-gray-500">
-                          {new Date(review.date).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-500">
-                      Verified Purchase
-                    </span>
-                    <svg
-                      className="w-5 h-5 text-green-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <p className="text-gray-600 mt-2">{review.comment}</p>
-                <div className="flex items-center gap-4 mt-4">
-                  <button className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"
-                      />
-                    </svg>
-                    Helpful ({review.helpful})
-                  </button>
-                  <button className="text-sm text-gray-500 hover:text-gray-700">
-                    Report
-                  </button>
+        <div className="space-y-8">
+          {product.reviews.map((review, index) => (
+            <div key={index} className="border-b pb-8 last:border-b-0">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="font-medium text-gray-900">
+                    {review.reviewerName}
+                  </h3>
+                  <ReviewStars rating={review.rating} />
+                  <span className="text-sm text-gray-500">
+                    {new Date(review.date).toLocaleDateString()}
+                  </span>
                 </div>
               </div>
-            ))}
-          </div>
+              <p className="text-gray-600 mt-2">{review.comment}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>

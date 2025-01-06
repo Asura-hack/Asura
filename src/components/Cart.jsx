@@ -105,9 +105,14 @@ const Cart = () => {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center border rounded-lg">
                     <button
-                      onClick={() =>
-                        updateQuantity(item.id, Math.max(0, item.quantity - 1))
-                      }
+                      onClick={() => {
+                        const newQuantity = Math.max(0, item.quantity - 1);
+                        if (newQuantity === 0) {
+                          removeFromCart(item.id);
+                        } else {
+                          updateQuantity(item.id, newQuantity);
+                        }
+                      }}
                       className="px-3 py-1 hover:bg-gray-100"
                     >
                       -
@@ -120,6 +125,7 @@ const Cart = () => {
                       +
                     </button>
                   </div>
+
                   <button
                     onClick={() => removeFromCart(item.id)}
                     className="text-red-600 hover:text-red-700"

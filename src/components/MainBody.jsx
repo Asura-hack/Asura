@@ -59,15 +59,13 @@ const MainBody = ({ searchQuery, searchCategory }) => {
     <div className="bg-gray-50 min-h-screen py-3 sm:py-6">
       <div className="max-w-screen-2xl mx-auto px-3 sm:px-6">
         <SaleField />
-        <div className="flex flex-col lg:flex-row gap-6 xl:gap-8">
-          <div className="lg:w-64">
-            <div className="lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] overflow-y-auto">
-              <CategoryNav
-                categories={categories}
-                activeCategory={activeCategory}
-                onCategorySelect={handleCategorySelect}
-              />
-            </div>
+        <div className="flex flex-col lg:flex-row xl:gap-8">
+          <div className="lg:sticky lg:top-4 lg:h-screen lg:w-64">
+            <CategoryNav
+              categories={categories}
+              activeCategory={activeCategory}
+              onCategorySelect={handleCategorySelect}
+            />
           </div>
           <div className="flex-1">
             <div className="mb-4">
